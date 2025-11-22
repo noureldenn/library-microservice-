@@ -33,27 +33,25 @@ func (bc *BorrowController) CreateBorrow(c *gin.Context) {
 		return
 	}
 
-	// 1. Get member
 	member, err := bc.MemberClient.GetMember(request.MemberID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "member not found"})
 		return
 	}
 
-	// 2. Get book
 	book, err := bc.BookClient.GetBook(request.BookID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
 		return
 	}
 
-	// 3. Check availability
+	// Check availability
 	if book.AvailableCopies <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no available copies"})
 		return
 	}
 
-	// 4. Check if member already borrowed
+	//  Check if member already borrowed before
 	var existingBorrow models.Borrow
 	result := config.DB.Where(
 		"member_id = ? AND book_id = ? AND status = ?",
@@ -65,7 +63,7 @@ func (bc *BorrowController) CreateBorrow(c *gin.Context) {
 		return
 	}
 
-	// 5. Create borrow record
+	// Create borrow record
 	borrow := models.Borrow{
 		MemberID: member.ID,
 		BookID:   book.ID,
@@ -74,7 +72,7 @@ func (bc *BorrowController) CreateBorrow(c *gin.Context) {
 
 	config.DB.Create(&borrow)
 
-	// 6. Decrease book available copies (optional: call book service)
+	// Decrease book available copies
 	if err := bc.BookClient.DecreaseAvailable(book.ID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update book copies"})
 		return
