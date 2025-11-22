@@ -1,0 +1,13 @@
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
