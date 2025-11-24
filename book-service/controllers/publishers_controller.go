@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Create a new publisher
 func CreatePublisher(c *gin.Context) {
 	var publisher models.Publisher
 	if err := c.ShouldBindJSON(&publisher); err != nil {
@@ -20,14 +19,12 @@ func CreatePublisher(c *gin.Context) {
 	c.JSON(http.StatusCreated, publisher)
 }
 
-// Get all publishers
 func GetPublishers(c *gin.Context) {
 	var publishers []models.Publisher
 	config.DB.Find(&publishers)
 	c.JSON(http.StatusOK, publishers)
 }
 
-// Get publisher by ID
 func GetPublisherByID(c *gin.Context) {
 	id := c.Param("id")
 	var publisher models.Publisher
@@ -39,7 +36,6 @@ func GetPublisherByID(c *gin.Context) {
 	c.JSON(http.StatusOK, publisher)
 }
 
-// Update publisher
 func UpdatePublisher(c *gin.Context) {
 	id := c.Param("id")
 	var publisher models.Publisher
@@ -59,7 +55,6 @@ func UpdatePublisher(c *gin.Context) {
 	c.JSON(http.StatusOK, publisher)
 }
 
-// Delete publisher
 func DeletePublisher(c *gin.Context) {
 	id := c.Param("id")
 	if err := config.DB.Delete(&models.Publisher{}, id).Error; err != nil {
