@@ -33,16 +33,23 @@ func AddBook(c *gin.Context) {
 	}
 
 	if err := config.DB.Create(&book).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "could not create book",
-			"details": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	var result models.Book
+	if err := config.DB.
+		Preload("Author").
+		Preload("Category").
+		Preload("Publisher").
+		First(&result, book.ID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
 		"message": "book created successfully",
-		"book":    book,
+		"book":    result,
 	})
 }
 
