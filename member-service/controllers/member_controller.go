@@ -23,7 +23,11 @@ func CreateMember(c *gin.Context) {
 		return
 	}
 
-	config.DB.Create(&member)
+	if err := config.DB.Create(&member).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusCreated, member)
 }
 
