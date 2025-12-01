@@ -12,13 +12,13 @@ func RegisterBookRoutes(r *gin.Engine) {
 	{
 		bookRoutes.GET("/", controllers.GetAllBooks)
 		bookRoutes.GET("/:id", controllers.GetBook)
+		bookRoutes.PUT("/:id/decrease", controllers.DecreaseAvailability)
 
 		bookRoutes.Use(middlewares.AuthRequired(), middlewares.AdminOnly())
 		{
 			bookRoutes.POST("/", controllers.AddBook)
 			bookRoutes.PUT("/:id", controllers.UpdateBook)
 			bookRoutes.DELETE("/:id", controllers.DeleteBook)
-			bookRoutes.PUT("/:id/decrease", controllers.DecreaseAvailability)
 
 		}
 
