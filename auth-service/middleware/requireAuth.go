@@ -13,7 +13,7 @@ import (
 )
 
 func RequireAuth(c *gin.Context) {
-	tokenString, err := c.Cookie("authoraization")
+	tokenString, err := c.Cookie("Authoraization")
 	if err != nil {
 		c.JSON(401, gin.H{"error": "unauthenticated"})
 		c.Abort()
@@ -48,6 +48,8 @@ func RequireAuth(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 
 	c.Next()
 }
