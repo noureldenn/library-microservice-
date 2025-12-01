@@ -3,12 +3,23 @@ package routes
 import (
 	"member-service/controllers"
 
+	"member-service/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
 func MemberRoutes(r *gin.Engine) {
-	r.GET("/members", controllers.GetAllMembers)
-	r.POST("/members", controllers.CreateMember)
-	r.GET("/members/:id", controllers.GetMemberByID)
-	r.DELETE("/members/:id", controllers.DeleteMember)
+	memberroutes := r.Group("/members")
+
+	{
+		memberroutes.GET("/", controllers.GetAllMembers)
+		memberroutes.GET("/:id", controllers.GetMemberByID)
+
+		memberroutes.Use(middlewares.AuthRequired(), middlewares.AdminOnly())
+		{
+
+			memberroutes.POST("/", controllers.CreateMember)
+			memberroutes.DELETE("/:id", controllers.DeleteMember)
+		}
+	}
 }
